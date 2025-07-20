@@ -1,13 +1,53 @@
-import { View, Text, FlatList, StyleSheet } from "react-native";
-import React, { useContext } from "react";
+import React, { useContext, useRef, useState, useEffect } from "react";
+import { View, Dimensions, StyleSheet, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AppContext } from "../contexts/AppContext";
 import UserCard from "../components/UserCard";
+import {
+  RecyclerListView,
+  DataProvider,
+  LayoutProvider,
+} from "recyclerlistview";
+
+const { width } = Dimensions.get("window");
 
 const DashboardScreen = () => {
-  const { users, favorites, toggleFavorite } = useContext(AppContext);
+  const { users, favorites, toggleFavorite, fetchUsers } =
+    useContext(AppContext);
+  const [loading, setLoading] = useState(true);
 
-  const renderItem = ({ item }) => (
+  // DataProvider instance (should be memoized for performance)
+  const dataProvider = useRef(
+    new DataProvider((r1, r2) => r1.id !== r2.id)
+  ).current;
+
+  // LayoutProvider for row layout
+  const layoutProvider = useRef(
+    new LayoutProvider(
+      () => "USER_ROW",
+      (type, dim) => {
+        switch (type) {
+          case "USER_ROW":
+          default:
+            dim.width = width - 32; // padding
+            dim.height = 80;
+            break;
+        }
+      }
+    )
+  ).current;
+
+  // Fetch users and update loading state
+  useEffect(() => {
+    const loadUsers = async () => {
+      await fetchUsers();
+      setLoading(false);
+    };
+    loadUsers();
+    // Empty dependency array ensures this runs only once
+  }, []);
+
+  const rowRenderer = (type, item) => (
     <UserCard
       user={item}
       isFavorite={favorites.includes(item.id)}
@@ -17,16 +57,32 @@ const DashboardScreen = () => {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <FlatList
-        data={users}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={renderItem}
-        contentContainerStyle={{ padding: 16 }}
-      />
+      <View style={{ flex: 1, padding: 16 }}>
+        {loading ? (
+          <ActivityIndicator
+            size="large"
+            color="#0000ff"
+            style={styles.loader}
+          />
+        ) : (
+          <RecyclerListView
+            style={{ flex: 1 }}
+            layoutProvider={layoutProvider}
+            dataProvider={dataProvider.cloneWithRows(users)}
+            rowRenderer={rowRenderer}
+          />
+        )}
+      </View>
     </SafeAreaView>
   );
 };
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  loader: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});
 
 export default DashboardScreen;
