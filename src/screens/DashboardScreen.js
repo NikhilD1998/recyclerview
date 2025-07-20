@@ -1,23 +1,11 @@
 import { View, Text, FlatList, StyleSheet } from "react-native";
-import React, { useEffect, useState, useContext } from "react";
+import React, { useContext } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AppContext } from "../contexts/AppContext";
 import UserCard from "../components/UserCard";
 
 const DashboardScreen = () => {
-  const [users, setUsers] = useState([]);
-  const { favorites, toggleFavorite } = useContext(AppContext);
-
-  useEffect(() => {
-    fetch("https://reqres.in/api/users?page=2")
-      .then((response) => response.json())
-      .then((data) => {
-        setUsers(data.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-      });
-  }, []);
+  const { users, favorites, toggleFavorite } = useContext(AppContext);
 
   const renderItem = ({ item }) => (
     <UserCard

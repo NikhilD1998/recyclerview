@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const AppContext = createContext();
@@ -7,6 +7,17 @@ const FAVORITES_KEY = "FAVORITE_USERS";
 
 export const AppProvider = ({ children }) => {
   const [favorites, setFavorites] = useState([]);
+  const [users, setUsers] = useState([]);
+
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch("https://reqres.in/api/users?page=2");
+      const data = await response.json();
+      setUsers(data.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
   useEffect(() => {
     AsyncStorage.getItem(FAVORITES_KEY)
@@ -14,6 +25,7 @@ export const AppProvider = ({ children }) => {
         if (fav) setFavorites(JSON.parse(fav));
       })
       .catch(() => {});
+    fetchUsers();
   }, []);
 
   const toggleFavorite = async (userId) => {
@@ -28,7 +40,9 @@ export const AppProvider = ({ children }) => {
   };
 
   return (
-    <AppContext.Provider value={{ favorites, toggleFavorite }}>
+    <AppContext.Provider
+      value={{ users, favorites, toggleFavorite, fetchUsers }}
+    >
       {children}
     </AppContext.Provider>
   );
