@@ -13,11 +13,8 @@ export const AppProvider = ({ children }) => {
     try {
       const response = await fetch("https://reqres.in/api/users?page=2");
       const data = await response.json();
-      console.log("Fetched users:", data.data);
       setUsers(data.data);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
+    } catch (error) {}
   };
 
   useEffect(() => {
@@ -30,7 +27,6 @@ export const AppProvider = ({ children }) => {
   }, []);
 
   const toggleFavorite = async (userId) => {
-    console.log("Toggling favorite for user:", userId);
     let updatedFavorites;
     if (favorites.includes(userId)) {
       updatedFavorites = favorites.filter((id) => id !== userId);

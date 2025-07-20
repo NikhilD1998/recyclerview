@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from "react";
+import { useContext, useMemo } from "react";
 import { Dimensions, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AppContext } from "../contexts/AppContext";
@@ -16,7 +16,6 @@ const FavoriteScreen = () => {
 
   const favoriteUsers = useMemo(() => {
     const filteredUsers = users.filter((user) => favorites.includes(user.id));
-    console.log("Favorite Users:", filteredUsers);
     return filteredUsers;
   }, [users, favorites]);
 
