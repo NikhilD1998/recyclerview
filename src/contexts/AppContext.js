@@ -22,7 +22,7 @@ export const AppProvider = ({ children }) => {
       .then((fav) => {
         const parsedFavorites = fav ? JSON.parse(fav) : [];
         setFavorites(parsedFavorites);
-        console.log("Favorites loaded from AsyncStorage:", parsedFavorites); // Debug log
+        console.log("Favorites loaded from AsyncStorage:", parsedFavorites);
       })
       .catch((error) => console.error("Error loading favorites:", error));
     fetchUsers();
