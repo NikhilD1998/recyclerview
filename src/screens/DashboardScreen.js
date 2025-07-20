@@ -28,7 +28,7 @@ const DashboardScreen = () => {
           case "USER_ROW":
           default:
             dim.width = width - 32;
-            dim.height = 80;
+            dim.height = 96;
             break;
         }
       }
@@ -44,11 +44,13 @@ const DashboardScreen = () => {
   }, []);
 
   const rowRenderer = (type, item) => (
-    <UserCard
-      user={item}
-      isFavorite={favorites.includes(item.id)}
-      onToggleFavorite={toggleFavorite}
-    />
+    <View style={{ paddingBottom: 16 }}>
+      <UserCard
+        user={item}
+        isFavorite={favorites.includes(item.id)}
+        onToggleFavorite={toggleFavorite}
+      />
+    </View>
   );
 
   return (
@@ -62,11 +64,10 @@ const DashboardScreen = () => {
           />
         ) : (
           <RecyclerListView
-            style={{ flex: 1 }}
+            style={styles.recyclerListView}
             layoutProvider={layoutProvider}
             dataProvider={dataProvider.cloneWithRows(users)}
             rowRenderer={rowRenderer}
-            key={favorites.join(",")}
           />
         )}
       </View>
@@ -79,6 +80,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  cardContainer: {
+    marginBottom: 16,
+  },
+  recyclerListView: {
+    flex: 1,
   },
 });
 

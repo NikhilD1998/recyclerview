@@ -36,7 +36,7 @@ const FavoriteScreen = () => {
             case "USER_ROW":
             default:
               dim.width = width - 32;
-              dim.height = 80;
+              dim.height = 96;
               break;
           }
         }
@@ -45,11 +45,13 @@ const FavoriteScreen = () => {
   );
 
   const rowRenderer = (type, item) => (
-    <UserCard
-      user={item}
-      isFavorite={favorites.includes(item.id)}
-      onToggleFavorite={toggleFavorite}
-    />
+    <View style={{ paddingBottom: 16 }}>
+      <UserCard
+        user={item}
+        isFavorite={favorites.includes(item.id)}
+        onToggleFavorite={toggleFavorite}
+      />
+    </View>
   );
 
   return (
