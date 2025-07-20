@@ -16,12 +16,10 @@ const DashboardScreen = () => {
     useContext(AppContext);
   const [loading, setLoading] = useState(true);
 
-  // DataProvider instance (should be memoized for performance)
   const dataProvider = useRef(
     new DataProvider((r1, r2) => r1.id !== r2.id)
   ).current;
 
-  // LayoutProvider for row layout
   const layoutProvider = useRef(
     new LayoutProvider(
       () => "USER_ROW",
@@ -29,7 +27,7 @@ const DashboardScreen = () => {
         switch (type) {
           case "USER_ROW":
           default:
-            dim.width = width - 32; // padding
+            dim.width = width - 32;
             dim.height = 80;
             break;
         }
@@ -37,14 +35,12 @@ const DashboardScreen = () => {
     )
   ).current;
 
-  // Fetch users and update loading state
   useEffect(() => {
     const loadUsers = async () => {
       await fetchUsers();
       setLoading(false);
     };
     loadUsers();
-    // Empty dependency array ensures this runs only once
   }, []);
 
   const rowRenderer = (type, item) => (
@@ -70,6 +66,7 @@ const DashboardScreen = () => {
             layoutProvider={layoutProvider}
             dataProvider={dataProvider.cloneWithRows(users)}
             rowRenderer={rowRenderer}
+            key={favorites.join(",")}
           />
         )}
       </View>
