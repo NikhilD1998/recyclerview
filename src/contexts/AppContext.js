@@ -20,9 +20,11 @@ export const AppProvider = ({ children }) => {
   useEffect(() => {
     AsyncStorage.getItem(FAVORITES_KEY)
       .then((fav) => {
-        if (fav) setFavorites(JSON.parse(fav));
+        const parsedFavorites = fav ? JSON.parse(fav) : [];
+        setFavorites(parsedFavorites);
+        console.log("Favorites loaded from AsyncStorage:", parsedFavorites); // Debug log
       })
-      .catch(() => {});
+      .catch((error) => console.error("Error loading favorites:", error));
     fetchUsers();
   }, []);
 
