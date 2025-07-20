@@ -1,14 +1,14 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import MainScreen from "../screens/MainScreen";
 import FavoriteScreen from "../screens/FavoriteScreen";
+import DashboardScreen from "../screens/DashboardScreen";
 
 const Tab = createBottomTabNavigator();
 
 const RootNavigation = () => {
   return (
     <Tab.Navigator>
-      <Tab.Screen name="Main" component={MainScreen} />
-      <Tab.Screen name="Favorite" component={FavoriteScreen} />
+      <Tab.Screen name="DashboardScreen" component={DashboardScreen} />
+      <Tab.Screen name="FavoriteScreen" component={FavoriteScreen} />
     </Tab.Navigator>
   );
 };
