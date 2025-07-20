@@ -1,18 +1,51 @@
 import React, { useContext, useMemo } from "react";
-import { FlatList, StyleSheet } from "react-native";
+import { Dimensions, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AppContext } from "../contexts/AppContext";
 import UserCard from "../components/UserCard";
+import {
+  RecyclerListView,
+  DataProvider,
+  LayoutProvider,
+} from "recyclerlistview";
+
+const { width } = Dimensions.get("window");
 
 const FavoriteScreen = () => {
   const { users, favorites, toggleFavorite } = useContext(AppContext);
 
-  const favoriteUsers = useMemo(
-    () => users.filter((user) => favorites.includes(user.id)),
-    [users, favorites]
+  const favoriteUsers = useMemo(() => {
+    const filteredUsers = users.filter((user) => favorites.includes(user.id));
+    console.log("Favorite Users:", filteredUsers);
+    return filteredUsers;
+  }, [users, favorites]);
+
+  const dataProvider = useMemo(
+    () =>
+      new DataProvider((r1, r2) => r1.id !== r2.id).cloneWithRows(
+        favoriteUsers
+      ),
+    [favoriteUsers]
   );
 
-  const renderItem = ({ item }) => (
+  const layoutProvider = useMemo(
+    () =>
+      new LayoutProvider(
+        () => "USER_ROW",
+        (type, dim) => {
+          switch (type) {
+            case "USER_ROW":
+            default:
+              dim.width = width - 32;
+              dim.height = 80;
+              break;
+          }
+        }
+      ),
+    []
+  );
+
+  const rowRenderer = (type, item) => (
     <UserCard
       user={item}
       isFavorite={favorites.includes(item.id)}
@@ -22,12 +55,8 @@ const FavoriteScreen = () => {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <FlatList
-        data={favoriteUsers}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={renderItem}
-        contentContainerStyle={{ padding: 16 }}
-        ListEmptyComponent={
+      <View style={{ flex: 1, padding: 16 }}>
+        {favoriteUsers.length === 0 ? (
           <UserCard
             user={{
               first_name: "No",
@@ -38,8 +67,15 @@ const FavoriteScreen = () => {
             isFavorite={false}
             onToggleFavorite={() => {}}
           />
-        }
-      />
+        ) : (
+          <RecyclerListView
+            style={{ flex: 1 }}
+            layoutProvider={layoutProvider}
+            dataProvider={dataProvider}
+            rowRenderer={rowRenderer}
+          />
+        )}
+      </View>
     </SafeAreaView>
   );
 };
